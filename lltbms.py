@@ -55,7 +55,6 @@ class BMS():
         
         # TODO make parsed response more object-y
         # TODO Expand bitfields into lists
-        # TODO support variable NTC numbers based on NTC count field
 
         prot_status = []
         for i in range(16):
@@ -80,9 +79,11 @@ class BMS():
             "Relative SOC": values[10],
             "FET Status": values[11],
             "NTC Count": values[13],
-            "NTC 1 Temp": (values[14] - 2731) / 10 * 9/5 + 32,
-            "NTC 2 Temp": (values[15] - 2731) / 10 * 9/5 + 32
         }
+
+        for i in range(info["NTC Count"]):
+            info[f"NTC {i + 1} Temp"] = (values[14 + i] - 2731) / 10 * 9/5 + 32
+
         return info
 
     def get_voltages(self):
