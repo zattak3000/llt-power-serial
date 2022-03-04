@@ -92,7 +92,7 @@ class BMS():
         num_cells = len(response.data) // 2
 
         voltages = struct.unpack(f">{num_cells}H", response.data)
-        voltages = [i / 100 for i in voltages]
+        voltages = [i / 1000 for i in voltages]
         
         return voltages
 
