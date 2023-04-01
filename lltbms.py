@@ -51,7 +51,7 @@ class BMS():
         response = self.send_command(STATUS)
 
         # TODO make struct object constant
-        values = struct.unpack(">Hh7H5B2H", response.data)
+        values = struct.unpack(">Hh7H5B", response.data[:23])
         
         # TODO make parsed response more object-y
         # TODO Expand bitfields into lists
@@ -78,11 +78,12 @@ class BMS():
             "Version": values[9] / 10,
             "Relative SOC": values[10],
             "FET Status": values[11],
-            "NTC Count": values[13],
+            "NTC Temp": []
         }
 
-        for i in range(info["NTC Count"]):
-            info[f"NTC {i + 1} Temp"] = (values[14 + i] - 2731) / 10 * 9/5 + 32
+        for ntc in struct.unpack(f">{values[13]}H", response.data[23:]):
+            f = (ntc - 2731) / 10 * 9/5 + 32
+            info["NTC Temp"].append(f)
 
         return info
 
